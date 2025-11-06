@@ -49,28 +49,14 @@ const formatTime = (ms) => {
 window.openModal = (project = null) => {
     document.getElementById('project-form').reset();
     const modal = document.getElementById('project-modal');
-    const clientSelect = document.getElementById('client_id');
-
-    // Default select options
-    clientSelect.innerHTML = '<option value="">Select Client</option>';
-    // {% for client in clients %} are already available in the template scope, but for a real app,
-    // you'd fetch this list via AJAX if it were dynamic. Since it's static in the template, we'll use it.
 
     if (project) {
         document.getElementById('modal-title').textContent = 'Edit Project';
         document.getElementById('project-id').value = project.ProjectID;
         document.getElementById('name').value = project.Name;
+        document.getElementById('client_name').value = project.ClientName;
         document.getElementById('rateValue').value = project.RateValue;
-
-        // Select rate type radio button
         document.querySelector(`input[name="rateType"][value="${project.RateType}"]`).checked = true;
-
-        // Select client option
-        const clientOption = Array.from(clientSelect.options).find(opt => opt.textContent === project.ClientName);
-        if (clientOption) {
-            clientOption.selected = true;
-        }
-
     } else {
         document.getElementById('modal-title').textContent = 'Add New Project';
         document.getElementById('project-id').value = '';
@@ -121,12 +107,12 @@ const saveProject = async (e) => {
 
     const payload = {
         name: document.getElementById('name').value.trim(),
-        client_id: document.getElementById('client_id').value,
+        client_name: document.getElementById('client_name').value.trim(),
         rateType: form.querySelector('input[name="rateType"]:checked').value,
         rateValue: parseFloat(document.getElementById('rateValue').value),
     };
 
-    if (!payload.name || !payload.client_id || isNaN(payload.rateValue) || payload.rateValue <= 0) {
+    if (!payload.name || !payload.client_name || isNaN(payload.rateValue) || payload.rateValue <= 0) {
         showToast('Please fill in all fields correctly.', 'error');
         return;
     }

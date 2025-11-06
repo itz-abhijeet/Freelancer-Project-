@@ -90,7 +90,6 @@ def get_projects():
         # Clean up database types for JSON
         p['RateValue'] = float(p['RateValue'])
         p['ProjectID'] = p['ProjectID']
-
     return jsonify(projects)
 
 @app.route('/api/projects', methods=['POST'])
@@ -99,14 +98,21 @@ def save_project():
     data = request.json
 
     # 1. Input Validation
-    if not all(k in data for k in ['name', 'client_id', 'rateType', 'rateValue']):
+    if not all(k in data for k in ['name', 'client_name', 'rateType', 'rateValue']):
         return jsonify({"error": "Missing project fields"}), 400
 
     project_id = data.get('id')
     name = data['name']
-    client_id = data['client_id']
+    client_name = data['client_name']
     rate_type = data['rateType']
     rate_value = data['rateValue']
+
+    # Check if client exists, if not create it
+    client = execute_query("SELECT ClientID FROM Client WHERE Name = %s", (client_name,), fetch=True)
+    if client:
+        client_id = client[0]['ClientID']
+    else:
+        client_id = execute_query("INSERT INTO Client (Name) VALUES (%s)", (client_name,), commit=True)
 
     if project_id:
         # Update existing project

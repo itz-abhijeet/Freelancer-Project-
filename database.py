@@ -7,7 +7,7 @@ from datetime import datetime
 
 # IMPORTANT: Set this to match your XAMPP setup
 DB_CONFIG = {
-    'host': 'localhost',
+    'host': '127.0.0.1',
     'user': 'root',
     'password': '',  # Default XAMPP password is blank
     'database': 'freelancer_timer_db' # New database name for this app
